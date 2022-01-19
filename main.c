@@ -35,11 +35,11 @@ main (int argc, char **argv)
   int n = 100;
 	char *progname= argv[0];
 
-  points_t *pts = malloc( sizeof( points_t ) );
-  spline_t *spl = malloc( sizeof( spline_t ) );
+  points_t pts;
+  spline_t spl;
 
-  pts->n = 0;
-  spl->n = 0;
+  pts.n = 0;
+  spl.n = 0;
 
   /* process options, save user choices */
   while ((opt = getopt (argc, argv, "p:s:g:f:t:n:")) != -1) {
@@ -86,7 +86,7 @@ main (int argc, char **argv)
       exit (EXIT_FAILURE);
     }
 
-    if (read_pts_failed (inf, pts)) {
+    if (read_pts_failed (inf, &pts)) {
       fprintf (stderr, "%s: bad contents of points file: %s\n\n", argv[0],
                inp);
       exit (EXIT_FAILURE);
@@ -100,12 +100,10 @@ main (int argc, char **argv)
       exit (EXIT_FAILURE);
     }
 
-    make_spl (pts, spl);
-    /*free( pts );
-    free( pts->x );
-    free( pts->y );*/
-    if( spl->n > 0 )
-			write_spl (spl, ouf);
+    make_spl (&pts, &spl);
+
+    if( spl.n > 0 )
+			write_spl (&spl, ouf);
 
     fclose (ouf);
   } else if (out != NULL) {  /* if point-file was NOT given, try to read splines from a file */
@@ -114,19 +112,19 @@ main (int argc, char **argv)
       fprintf (stderr, "%s: can not read spline file: %s\n\n", argv[0], inp);
       exit (EXIT_FAILURE);
     }
-    if (read_spl (splf, spl)) {
+    if (read_spl (splf, &spl)) {
       fprintf (stderr, "%s: bad contents of spline file: %s\n\n", argv[0],
                inp);
       exit (EXIT_FAILURE);
-
     }
+    fclose( splf ); /* TUTAJ JESZCZE CZY DAWAC fclose TAM WYZEJ PRZY exit_failure czy nie trzeba sprawdzic */
   } else { /* ponts were not given nor spline was given -> it is an error */
     fprintf (stderr, usage, argv[0]);
     exit (EXIT_FAILURE);
   }
 
-  if (spl->n < 1) { /* check if there is a valid spline */
-    fprintf (stderr, "%s: bad spline: n=%d\n\n", argv[0], spl->n);
+  if (spl.n < 1) { /* check if there is a valid spline */
+    fprintf (stderr, "%s: bad spline: n=%d\n\n", argv[0], spl.n);
     exit (EXIT_FAILURE);
   }
 
@@ -136,12 +134,12 @@ main (int argc, char **argv)
     int i;
     double dx;
 		if( fromX == 0 && toX == 0 ) { /* calculate plot range if it was not specified */
-			if( pts->n > 1 ) {
-				fromX= pts->x[0];
-				toX=   pts->x[pts->n-1];
-			} else if( spl->n > 1 ) {
-				fromX= spl->x[0];
-				toX=   spl->x[spl->n-1];
+			if( pts.n > 1 ) {
+				fromX= pts.x[0];
+				toX=   pts.x[pts.n-1];
+			} else if( spl.n > 1 ) {
+				fromX= spl.x[0];
+				toX=   spl.x[spl.n-1];
 			} else {
 				fromX= 0;
 				toX= 1;
@@ -157,18 +155,18 @@ main (int argc, char **argv)
 
     for (i = 0; i < n; i++)
       fprintf (gpf, "%g %g\n", fromX + i * dx,
-               value_spl (spl, fromX + i * dx));
-    //spline_t *test = &spl;
-    free( spl->x );
-    free( spl->f );
-    free( spl->f1 );
-    free( spl->f2 );
-    free( spl->f3 );
-    free( spl );
-    free( pts->x );
-    free( pts->y );
-    free( pts );
+               value_spl (&spl, fromX + i * dx));
+
     fclose (gpf);
+  }
+  free( spl.x );
+  free( spl.f );
+  free( spl.f1 );
+  free( spl.f2 );
+  free( spl.f3 );
+  if( inp != NULL ) {
+      free( pts.x );
+      free( pts.y );
   }
 
   return 0;

@@ -211,7 +211,6 @@ make_spl(points_t * pts, spline_t * spl)
 			}
 		}
 	}
-
 #ifdef DEBUG
 	{
 		FILE           *tst = fopen("debug_spline_plot.txt", "w");
@@ -233,5 +232,6 @@ make_spl(points_t * pts, spline_t * spl)
 		fclose(tst);
 	}
 #endif
+    free_matrix(eqs);
 
 }

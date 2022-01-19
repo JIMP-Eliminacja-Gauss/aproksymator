@@ -11,6 +11,8 @@ typedef struct {
 
 matrix_t * make_matrix( int rn, int cn );
 
+void free_matrix( matrix_t * );
+
 matrix_t * read_matrix( FILE *in );
 
 void write_matrix( matrix_t *, FILE *out );

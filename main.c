@@ -164,9 +164,10 @@ main (int argc, char **argv)
   free( spl.f1 );
   free( spl.f2 );
   free( spl.f3 );
+
   if( inp != NULL ) {
-      free( pts.x );
-      free( pts.y );
+    free( pts.x );
+    free( pts.y );
   }
 
   return 0;

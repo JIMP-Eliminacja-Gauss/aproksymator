@@ -10,13 +10,13 @@ make_matrix (int rn, int cn)
   if (new_mat == NULL)
     return NULL;
   if ((new_mat->e =
-       malloc ((size_t) rn * (size_t) cn * sizeof *new_mat->e)) == NULL) {
+       malloc (sizeof *new_mat->e * rn * cn)) == NULL) {
     free (new_mat);
     return NULL;
   }
   new_mat->rn = rn;
   new_mat->cn = cn;
-  memset (new_mat->e, 0, (size_t) (rn * (size_t) cn * sizeof *new_mat->e));
+  memset (new_mat->e, 0, sizeof *new_mat->e * rn * cn);
   return new_mat;
 }
 
@@ -30,6 +30,7 @@ free_matrix (matrix_t * m)
 void
 put_entry_matrix (matrix_t * m, int i, int j, double val)
 {
+  // last col is b as in Ax = b
   if (i >= 0 && i < m->rn && j >= 0 && j <= m->cn)
     m->e[i * m->cn + j] = val;
 }
@@ -83,8 +84,8 @@ write_matrix (matrix_t * m, FILE * out)
   fprintf (out, "%d %d\n", m->rn, m->cn);
   for (i = 0; i < m->rn; i++) {
     for (j = 0; j < m->cn - 1; j++)
-      fprintf (out, "%8.5f ", m->e[i * m->cn + j]);
-    fprintf (out, "%8.5f\n", m->e[i * m->cn + j]);
+      fprintf (out, "%-8.5f ", m->e[i * m->cn + j]);
+    fprintf (out, "%10.5f\n", m->e[i * m->cn + j]);
   }
 }
 

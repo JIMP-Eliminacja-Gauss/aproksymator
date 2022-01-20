@@ -183,6 +183,7 @@ make_spl(points_t * pts, spline_t * spl)
 	}
 
 #ifdef DEBUG
+  printf("\nPrzed operacjami na macierzy\n");
 	write_matrix(eqs, stdout);
 #endif
 
@@ -230,8 +231,7 @@ make_spl(points_t * pts, spline_t * spl)
 			}
 			fprintf(tst, "%g %g %g %g %g\n", xi, yi, dyi, d2yi, d3yi );
 		}
-		fclose(tst);
-	}
+		fclose(tst); }
 #endif
     free_matrix(eqs);
 

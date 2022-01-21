@@ -1,4 +1,5 @@
 CFLAGS=-ggdb -Wall -Wextra -pedantic 
+
 aprox: main.o splines.o points.o aproksymator_na_bazie.o gaus/libge.a
 	$(CC) $(CFLAGS) -o aprox  main.o splines.o points.o aproksymator_na_bazie.o -L gaus -l ge
 

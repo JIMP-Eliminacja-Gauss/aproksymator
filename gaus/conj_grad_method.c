@@ -92,16 +92,16 @@ conj_grad_solver(matrix_t *mat) {
 
 
     for (k = 0; k < end; k++) {
-        r_mat = odejmowanie( tmp_r, mull_matrix( mnozenie( alfa, a_mat ), p_mat ) );
+        r_mat = matrix_add( tmp_r, mull_matrix( mnozenie( alfa, a_mat ), p_mat ), -1 );
         //x_mat = x_mat + alfa*p1;
         beta = mull_matrix( transpose_matrix(r_mat), r_mat )->e[0] / mull_matrix( transpose_matrix(tmp_r), tmp_r )->e[0];
-        p_mat = dodawanie( r_mat, mnozenie( beta, tmp_p ) );
+        p_mat = matrix_add( r_mat, mnozenie( beta, tmp_p ), 1 );
         free(tmp_p);
         free(tmp_r);
         tmp_p = p_mat;
         tmp_r = r_mat;
         alfa = mull_matrix( transpose_matrix(r_mat), r_mat )->e[0] / mull_matrix( mull_matrix( transpose_matrix(p_mat), a_mat ), p_mat )->e[0];
-        x_mat = dodawanie( x_mat, mnozenie( alfa, p_mat ) );
+        x_mat = matrix_add( x_mat, mnozenie( alfa, p_mat ), 1 );
     }
 
     return NULL;

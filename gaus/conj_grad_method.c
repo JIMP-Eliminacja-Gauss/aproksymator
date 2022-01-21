@@ -1,6 +1,6 @@
 #include "conj_grad_method.h"
 #include "matrix.h"
-
+#include <stdlib.h>
 #ifndef MIN
 #define MIN 1e-9
 #endif
@@ -113,5 +113,5 @@ conj_grad_solver(matrix_t *mat) {
         x_mat = matrix_add( x_mat, mnozenie( alfa, p_mat ), 1 );
     }
 
-    return NULL;
+    return x_mat;
 }

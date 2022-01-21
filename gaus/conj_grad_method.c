@@ -58,11 +58,15 @@ conj_grad_solver(matrix_t *mat) {
     int j = 0;
     int end = mat->rn;
     double rsold;
+    double alfa;
+    double beta;
     matrix_t *x_mat = make_matrix(mat->cn, 1);
     matrix_t *r_mat = make_matrix(mat->cn, 1);
     matrix_t *p_mat = NULL;
     matrix_t *a_mat = make_matrix(mat->rn, mat->rn);
     matrix_t *b_mat = make_matrix(mat->rn, 1);
+    matrix_t *tmp_r = NULL;
+    matrix_t *tmp_p = NULL;
 
     if (x_mat == NULL || r_mat == NULL || a_mat == NULL || b_mat == NULL) {
         return NULL;
@@ -81,12 +85,23 @@ conj_grad_solver(matrix_t *mat) {
     r_mat = matrix_add(b_mat, mull_matrix(a_mat, x_mat), -1);
     p_mat = copy_matrix(r_mat);
     rsold = (mull_matrix(transpose_matrix(r_mat), r_mat))->e[0];
-
-    
+    alfa = rsold / mull_matrix( mull_matrix( transpose_matrix(p_mat), a_mat ), p_mat )->e[0];
+    x_mat = mnozenie( alfa, p_mat );
+    tmp_r = r_mat;
+    tmp_p = p_mat;
 
 
     for (k = 0; k < end; k++) {
-        ;
+        r_mat = odejmowanie( tmp_r, mull_matrix( mnozenie( alfa, a_mat ), p_mat ) );
+        //x_mat = x_mat + alfa*p1;
+        beta = mull_matrix( transpose_matrix(r_mat), r_mat )->e[0] / mull_matrix( transpose_matrix(tmp_r), tmp_r )->e[0];
+        p_mat = dodawanie( r_mat, mnozenie( beta, tmp_p ) );
+        free(tmp_p);
+        free(tmp_r);
+        tmp_p = p_mat;
+        tmp_r = r_mat;
+        alfa = mull_matrix( transpose_matrix(r_mat), r_mat )->e[0] / mull_matrix( mull_matrix( transpose_matrix(p_mat), a_mat ), p_mat )->e[0];
+        x_mat = dodawanie( x_mat, mnozenie( alfa, p_mat ) );
     }
 
     return NULL;

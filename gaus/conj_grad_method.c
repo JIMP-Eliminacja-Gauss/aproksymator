@@ -83,6 +83,8 @@ conj_grad_solver(matrix_t *mat) {
     matrix_t *x_mat = make_matrix(mat->rn, 1);
     matrix_t *a_mat = make_matrix(mat->rn, mat->rn);
     matrix_t *b_mat = make_matrix(mat->rn, 1);
+    matrix_t *tmp_r = NULL;
+    matrix_t *tmp_p = NULL;
 
     matrix_t *r_mat = NULL;
     matrix_t *r_t_mat = NULL;

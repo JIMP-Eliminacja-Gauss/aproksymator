@@ -2,7 +2,6 @@
 #include <stdlib.h>
 
 #include "conj_grad_method.h"
-#include "matrix.h"
 
 
 #ifndef MIN
@@ -114,7 +113,7 @@ conj_grad_solver(matrix_t *mat) {
     p_t_mat = transpose_matrix(p_mat);
     temp_mat = mull_matrix(r_t_mat, r_mat);
     rsold = temp_mat->e[0];
-    free(temp_mat);
+    free_matrix(temp_mat);
 
 
     for (k = 0; k < end; k++) {
@@ -123,31 +122,31 @@ conj_grad_solver(matrix_t *mat) {
 
         alpha = rsold / temp_mat->e[0];
 
-        free(temp_mat);
+        free_matrix(temp_mat);
 
         // x = x + alpha * p
         temp_mat = scalar_mull(p_mat, alpha);
         temp2_mat = matrix_add(x_mat, temp_mat, 1);
-        free(x_mat);
+        free_matrix(x_mat);
         x_mat = copy_matrix(temp2_mat);
-        free(temp_mat);
-        free(temp2_mat);
+        free_matrix(temp_mat);
+        free_matrix(temp2_mat);
 
 
         // r = r + alpha * Ap
         temp_mat = scalar_mull(ap_mat, alpha);
         temp2_mat = matrix_add(r_mat, temp_mat, -1);
-        free(r_mat);
+        free_matrix(r_mat);
         r_mat = copy_matrix(temp2_mat);
-        free(temp_mat);
-        free(temp2_mat);
+        free_matrix(temp_mat);
+        free_matrix(temp2_mat);
 
         // rsnew = r' * r
-        free(r_t_mat);
+        free_matrix(r_t_mat);
         r_t_mat = transpose_matrix(r_mat);
         temp_mat = mull_matrix(r_t_mat, r_mat);
         rsnew = temp_mat->e[0];
-        free(temp_mat);
+        free_matrix(temp_mat);
 
         if (sqrt(rsnew) < MIN) {
             break;
@@ -155,9 +154,9 @@ conj_grad_solver(matrix_t *mat) {
         
         // p = r + (rsnew/rsold) * p
         temp_mat = scalar_mull(p_mat, rsnew/rsold);
-        free(p_mat);
+        free_matrix(p_mat);
         p_mat = mull_matrix(r_mat, temp_mat);
-        free(temp_mat);
+        free_matrix(temp_mat);
 
         rsold = rsnew;
     }

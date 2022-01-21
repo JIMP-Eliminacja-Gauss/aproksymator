@@ -51,6 +51,15 @@ matrix_add(matrix_t *a, matrix_t *b, int alfa) {
     return c;
 }
 
+matrix_t *
+mnozenie( double a, matrix_t *m ) {
+    int i = 0;
+    int j = 0;
+    for( ; i < m->rn; i++ ) 
+        for( ; j < m->cn; j++ ) 
+            m->e[ i * m->cn + j] = m->e[ i * m->cn + j] * a;
+    return m;
+}
 
 matrix_t * 
 conj_grad_solver(matrix_t *mat) {

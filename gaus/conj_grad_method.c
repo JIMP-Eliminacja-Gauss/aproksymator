@@ -5,7 +5,7 @@
 
 
 #ifndef MIN
-#define MIN 1e-9
+#define MIN 1e-10
 #endif
 
 int 
@@ -42,11 +42,11 @@ matrix_add(matrix_t *a, matrix_t *b, int alfa) {
     if (c == NULL) 
         return NULL;
 
-    for ( ; i < a->rn; i++) {
-        for ( ; j < a->cn; j++ ) {
+    for ( i = 0; i < a->rn; i++) {
+        for ( j = 0; j < a->cn; j++ ) {
             double a_val = a->e[i * a->cn + j];
             double b_val = b->e[i * b->cn + j];
-            add_to_entry_matrix(c, i, j, a_val + alfa * b_val);
+            put_entry_matrix(c, i, j, a_val + alfa * b_val);
             // int alfa can either be 1 or -1
         }
     }
@@ -63,8 +63,8 @@ scalar_mull(matrix_t *a, double lambda) {
         return NULL;
     }
 
-    for ( ; i < a->rn; i++ ) {
-        for ( ; j < a->cn; j++ ) {
+    for (i = 0 ; i < a->rn; i++ ) {
+        for (j = 0 ; j < a->cn; j++ ) {
             b->e[ i * a->cn + j ] *= lambda;
         }
     }
@@ -83,8 +83,6 @@ conj_grad_solver(matrix_t *mat) {
     matrix_t *x_mat = make_matrix(mat->rn, 1);
     matrix_t *a_mat = make_matrix(mat->rn, mat->rn);
     matrix_t *b_mat = make_matrix(mat->rn, 1);
-    matrix_t *tmp_r = NULL;
-    matrix_t *tmp_p = NULL;
 
     matrix_t *r_mat = NULL;
     matrix_t *r_t_mat = NULL;
@@ -100,16 +98,18 @@ conj_grad_solver(matrix_t *mat) {
     }
 
     for (; k < b_mat->rn; k++) {
-        put_entry_matrix(b_mat, k, 0, mat->e[k * mat->cn + mat->cn]);
+        put_entry_matrix(b_mat, k, 0, mat->e[k * mat->cn + mat->cn-1]);
     }
+
 
     for (k = 0; k < end; k++) {
         for (j = 0; j < end; j++) {
             put_entry_matrix(a_mat, k, j, mat->e[k * mat->cn + j]);
         }
     }
-
-    r_mat = matrix_add(b_mat, mull_matrix(a_mat, x_mat), -1);
+    temp_mat = mull_matrix(a_mat, x_mat);
+    r_mat = matrix_add(b_mat, temp_mat, -1);
+    free_matrix(temp_mat);
     r_t_mat = transpose_matrix(r_mat);
     p_mat = copy_matrix(r_mat);
     p_t_mat = transpose_matrix(p_mat);
@@ -117,9 +117,12 @@ conj_grad_solver(matrix_t *mat) {
     rsold = temp_mat->e[0];
     free_matrix(temp_mat);
 
-
     for (k = 0; k < end; k++) {
+        if (ap_mat != NULL)
+            free(ap_mat);
+
         ap_mat = mull_matrix(a_mat, p_mat);
+
         temp_mat = mull_matrix(p_t_mat, ap_mat);
 
         alpha = rsold / temp_mat->e[0];
@@ -135,7 +138,7 @@ conj_grad_solver(matrix_t *mat) {
         free_matrix(temp2_mat);
 
 
-        // r = r + alpha * Ap
+        // r = r - alpha * Ap
         temp_mat = scalar_mull(ap_mat, alpha);
         temp2_mat = matrix_add(r_mat, temp_mat, -1);
         free_matrix(r_mat);
@@ -158,6 +161,8 @@ conj_grad_solver(matrix_t *mat) {
         temp_mat = scalar_mull(p_mat, rsnew/rsold);
         free_matrix(p_mat);
         p_mat = mull_matrix(r_mat, temp_mat);
+        free_matrix(p_t_mat);
+        p_t_mat = transpose_matrix(p_mat);
         free_matrix(temp_mat);
 
         rsold = rsnew;

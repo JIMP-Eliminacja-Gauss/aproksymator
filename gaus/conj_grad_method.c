@@ -81,13 +81,15 @@ conj_grad_solver(matrix_t *mat) {
     double rsold, rsnew;
     double alpha;
     matrix_t *x_mat = make_matrix(mat->rn, 1);
+    //testy
+    put_entry_matrix(x_mat, 0, 0, 2);
+    put_entry_matrix(x_mat, 0, 1, 1);
+    //testy
     matrix_t *a_mat = make_matrix(mat->rn, mat->rn);
     matrix_t *b_mat = make_matrix(mat->rn, 1);
 
     matrix_t *r_mat = NULL;
-    matrix_t *r_t_mat = NULL;
     matrix_t *p_mat = NULL;
-    matrix_t *p_t_mat = NULL;
     matrix_t *ap_mat = NULL;
     matrix_t *temp_mat = NULL;
     matrix_t *temp2_mat = NULL;
@@ -107,27 +109,34 @@ conj_grad_solver(matrix_t *mat) {
             put_entry_matrix(a_mat, k, j, mat->e[k * mat->cn + j]);
         }
     }
+
+    // r = b - A * x
     temp_mat = mull_matrix(a_mat, x_mat);
     r_mat = matrix_add(b_mat, temp_mat, -1);
     free_matrix(temp_mat);
-    r_t_mat = transpose_matrix(r_mat);
+
+    // p = r
     p_mat = copy_matrix(r_mat);
-    p_t_mat = transpose_matrix(p_mat);
-    temp_mat = mull_matrix(r_t_mat, r_mat);
-    rsold = temp_mat->e[0];
+
+    // rsold = r' * r 
+    temp_mat = transpose_matrix(r_mat);
+    temp2_mat = mull_matrix(temp_mat, r_mat);
+    rsold = temp2_mat->e[0];
     free_matrix(temp_mat);
+    free_matrix(temp2_mat);
 
     for (k = 0; k < end; k++) {
+        // Ap = A * p
         if (ap_mat != NULL)
-            free(ap_mat);
-
+            free_matrix(ap_mat);
         ap_mat = mull_matrix(a_mat, p_mat);
 
-        temp_mat = mull_matrix(p_t_mat, ap_mat);
-
-        alpha = rsold / temp_mat->e[0];
-
+        // alpha = rsold / ( p' * Ap )
+        temp_mat = transpose_matrix(p_mat);
+        temp2_mat = mull_matrix(temp_mat, ap_mat); 
+        alpha = rsold / temp2_mat->e[0]; 
         free_matrix(temp_mat);
+        free_matrix(temp2_mat);
 
         // x = x + alpha * p
         temp_mat = scalar_mull(p_mat, alpha);
@@ -147,33 +156,30 @@ conj_grad_solver(matrix_t *mat) {
         free_matrix(temp2_mat);
 
         // rsnew = r' * r
-        free_matrix(r_t_mat);
-        r_t_mat = transpose_matrix(r_mat);
-        temp_mat = mull_matrix(r_t_mat, r_mat);
-        rsnew = temp_mat->e[0];
+        temp_mat = transpose_matrix(r_mat);
+        temp2_mat = mull_matrix(temp_mat, r_mat);
+        rsnew = temp2_mat->e[0];
         free_matrix(temp_mat);
+        free_matrix(temp2_mat);
 
-        if (sqrt(rsnew) < MIN) {
+        if (sqrt(rsnew) < MIN)
             break;
-        }
+
         
         // p = r + (rsnew/rsold) * p
         temp_mat = scalar_mull(p_mat, rsnew/rsold);
         free_matrix(p_mat);
-        p_mat = mull_matrix(r_mat, temp_mat);
-        free_matrix(p_t_mat);
-        p_t_mat = transpose_matrix(p_mat);
+        p_mat = matrix_add(r_mat, temp_mat, 1);
         free_matrix(temp_mat);
 
+        // rsold = rsnew    
         rsold = rsnew;
     }
 
     free_matrix(a_mat);
     free_matrix(b_mat);
     free_matrix(r_mat);
-    free_matrix(r_t_mat);
     free_matrix(p_mat);
-    free_matrix(p_t_mat);
     free_matrix(ap_mat);
 
     return x_mat;

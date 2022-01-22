@@ -9,9 +9,15 @@ int main( int argc, char **argv ) {
         return -1;
     in = fopen( argv[1], "r" );
     matrix_t *m = read_matrix(in);    
+    matrix_t *c = NULL;
     printf("\nMacierz:\n");
     write_matrix( m, stdout );
     printf("\nPo rozwiazaniu:\n");
-    write_matrix( conj_grad_solver(m), stdout );
+    c = conj_grad_solver(m);
+    write_matrix( c, stdout );
+
+    free_matrix(m);
+    free_matrix(c);
+    fclose(in);
     return 0;
 }

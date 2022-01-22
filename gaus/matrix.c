@@ -111,7 +111,7 @@ transpose_matrix (matrix_t * s)
 {
   matrix_t *d = NULL;
   if (s != NULL)
-    d = make_matrix (s->rn, s->cn);
+    d = make_matrix (s->cn, s->rn);
   if (d != NULL) {
     int i, j;
     for (i = 0; i < s->rn; i++)

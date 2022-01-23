@@ -5,7 +5,7 @@
 
 
 #ifndef MIN
-#define MIN 1e-10
+#define MIN 1e-9
 #endif
 
 int 

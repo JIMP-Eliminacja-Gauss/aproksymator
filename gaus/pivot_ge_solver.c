@@ -14,7 +14,7 @@ main (int argc, char **argv)
       matrix_t *c = NULL;
       int *row_per = malloc (m->rn * sizeof *row_per);
       printf ("\nMacierz:\n");
-      write_matrix (m, stdout);
+//      write_matrix (m, stdout);
       if (argc > 2 && strcmp (argv[2], "-s") == 0) {
         c = symm_pivot_ge_matrix (m, row_per);
         sym = 1;
@@ -24,7 +24,7 @@ main (int argc, char **argv)
       if (c != NULL) {
         int i;
         printf ("\nPo elim. Gaussa:\n");
-        write_matrix (c, stdout);
+ //       write_matrix (c, stdout);
         printf ("Permutacja:");
         for (i = 0; i < c->rn; i++)
           printf (" %d", row_per[i]);
@@ -37,7 +37,7 @@ main (int argc, char **argv)
             printf (" %d", iper[i]);
           printf ("\n");
           printf ("\nPo podstawieniu wstecz:\n");
-          write_matrix (c, stdout);
+          //write_matrix (c, stdout);
           printf ("Rozwiązania: \n");
           for (j = 0; j < c->cn - c->rn; j++) {
             printf ("Nr %d:\n", j + 1);

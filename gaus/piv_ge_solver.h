@@ -2,6 +2,7 @@
 #define PIV_GE_SOLVER_H
 
 #include "matrix.h"
+#include "conj_grad_method.h"
 
 int piv_ge_solver( matrix_t * eqs );
 

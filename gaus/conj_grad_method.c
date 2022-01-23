@@ -175,7 +175,18 @@ conj_grad_solver(matrix_t *mat) {
         // rsold = rsnew    
         rsold = rsnew;
     }
-
+    printf("\n\nPO WSZYSTKIM MACIERZ A\n");
+    write_matrix(a_mat, stdout);
+    printf("\n\nMACIERZ ROZWIAZAN:\n");
+    write_matrix(x_mat, stdout);
+    printf("\n\n mat->rn mat->cn %d %d\n", mat->rn, mat->cn );
+    j = 0;
+    for( k = 0; k < mat->rn*mat->cn; k++ ) {
+        if( k % (mat->cn) == 3 ) {
+            mat->e[k] = x_mat->e[j];
+            j++;
+        }
+    }
     free_matrix(a_mat);
     free_matrix(b_mat);
     free_matrix(r_mat);

@@ -14,7 +14,7 @@ int main( int argc, char **argv ) {
     write_matrix( m, stdout );
     printf("\nPo rozwiazaniu:\n");
     c = conj_grad_solver(m);
-    write_matrix( c, stdout );
+    write_matrix( m, stdout );
 
     free_matrix(m);
     free_matrix(c);

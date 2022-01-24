@@ -1,6 +1,6 @@
 #include "makespl.h"
 #include "piv_ge_solver.h"
-
+#include "conj_grad_method.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <float.h>
@@ -132,6 +132,7 @@ xfi(double a, double b, int n, int i, FILE *out)
 	for( j= 0; j < 5; j++ )
 		fprintf( out, " %g", hx[j] );
 	fprintf( out, "]\n" );
+    return 0;
 }
 
 void
@@ -186,11 +187,12 @@ make_spl(points_t * pts, spline_t * spl)
   printf("\nPrzed operacjami na macierzy\n");
 	write_matrix(eqs, stdout);
 #endif
-
-	if (conj_grad_solver(eqs) == NULL) {
+    matrix_t *tmp = conj_grad_solver(eqs);
+	if (tmp == NULL) {
 		spl->n = 0;
 		return;
 	}
+    free(tmp);
 #ifdef DEBUG
 	write_matrix(eqs, stdout);
 #endif

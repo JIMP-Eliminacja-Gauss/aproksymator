@@ -1,8 +1,7 @@
-#include <math.h>
+
 #include <stdlib.h>
 
 #include "conj_grad_method.h"
-
 
 #ifndef MIN
 #define MIN 1e-10
@@ -162,8 +161,8 @@ conj_grad_solver(matrix_t *mat) {
         free_matrix(temp_mat);
         free_matrix(temp2_mat);
 
-        if (sqrt(rsnew) < MIN)
-            break;
+        /*if (sqrt(rsnew) < MIN)
+            break;*/
 
         
         // p = r + (rsnew/rsold) * p

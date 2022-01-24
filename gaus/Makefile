@@ -1,4 +1,4 @@
-libge: matrix.o conj_grad_method.o
+libge: matrix.o pivot.o piv_ge_solver.o conj_grad_method.o
 	ar rvs libge.a $^
 
 matrix.o: matrix.c matrix.h

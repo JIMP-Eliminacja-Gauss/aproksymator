@@ -191,6 +191,6 @@ conj_grad_solver(matrix_t *mat) {
     free_matrix(r_mat);
     free_matrix(p_mat);
     free_matrix(ap_mat);
+    free_matrix(x_mat);
 
-    return x_mat;
 }

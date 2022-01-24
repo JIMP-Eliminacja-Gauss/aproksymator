@@ -188,7 +188,7 @@ make_spl(points_t * pts, spline_t * spl)
 	write_matrix(eqs, stdout);
 #endif
     matrix_t *tmp = conj_grad_solver(eqs);
-	if (tmp == NULL) {
+	if (tmp == NULL/*piv_ge_solver(eqs)*/) {
 		spl->n = 0;
 		return;
 	}
